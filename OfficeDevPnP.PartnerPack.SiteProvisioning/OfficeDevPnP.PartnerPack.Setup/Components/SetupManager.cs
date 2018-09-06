@@ -413,7 +413,7 @@ namespace OfficeDevPnP.PartnerPack.Setup.Components
                     "\"keyId\": \"" + KeyId + "\"," +
                     "\"type\": \"AsymmetricX509Cert\"," +
                     "\"usage\": \"Verify\"," +
-                    "\"key\":  \"" + base64Cert + "\"" +
+                    "\"value\":  \"" + base64Cert + "\"" +
                 "}";
 
             return (keyCredential);
@@ -471,9 +471,9 @@ namespace OfficeDevPnP.PartnerPack.Setup.Components
                     Value = info.AzureAppSharedSecret,
                 });
 
-                // Get an Access Token to create the application via Microsoft Graph
+                // Get an Access Token to create the application via Azure AD Graph API
                 var office365AzureADAccessToken = await AzureManagementUtility.GetAccessTokenSilentAsync(
-                    AzureManagementUtility.MicrosoftGraphResourceId,
+                    AzureManagementUtility.AzureADGraphResourceId,
                     ConfigurationManager.AppSettings["O365:ClientId"]);
 
                 var azureAdApplicationCreated = false;
@@ -494,8 +494,9 @@ namespace OfficeDevPnP.PartnerPack.Setup.Components
 
                         // Thus, retrieve it
                         String jsonApplications = await HttpHelper.MakeGetRequestForStringAsync(
-                            String.Format("{0}applications?$filter=identifierUris/any(c:c+eq+'{1}')",
-                                AzureManagementUtility.MicrosoftGraphBetaBaseUri,
+                            String.Format("{0}applications{1}$filter=identifierUris/any(c:c+eq+'{2}')",
+                                AzureManagementUtility.AzureADGraphBaseUri,
+                                AzureManagementUtility.AzureADGraphApiVersion,
                                 HttpUtility.UrlEncode(info.ApplicationUniqueUri)),
                             office365AzureADAccessToken);
 
@@ -505,8 +506,9 @@ namespace OfficeDevPnP.PartnerPack.Setup.Components
                         {
                             // Remove it
                             await HttpHelper.MakeDeleteRequestAsync(
-                                String.Format("{0}applications/{1}",
-                                    AzureManagementUtility.MicrosoftGraphBetaBaseUri,
+                                String.Format("{0}applications{1}/{2}",
+                                    AzureManagementUtility.AzureADGraphBaseUri,
+                                    AzureManagementUtility.AzureADGraphApiVersion,
                                     applicationToUpdate.Id),
                                 office365AzureADAccessToken);
 
@@ -529,8 +531,9 @@ namespace OfficeDevPnP.PartnerPack.Setup.Components
         private static async Task CreateAzureADApplication(SetupInformation info, AzureAdApplication application, string office365AzureADAccessToken)
         {
             String jsonResponse = await HttpHelper.MakePostRequestForStringAsync(
-                String.Format("{0}applications",
-                    AzureManagementUtility.MicrosoftGraphBetaBaseUri),
+                String.Format("{0}applications{1}",
+                    AzureManagementUtility.AzureADGraphBaseUri,
+                    AzureManagementUtility.AzureADGraphApiVersion),
                 application,
                 "application/json", office365AzureADAccessToken);
 
