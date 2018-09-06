@@ -23,6 +23,11 @@ namespace OfficeDevPnP.PartnerPack.Setup.Components
         public static String MicrosoftGraphV1BaseUri = "https://graph.microsoft.com/v1.0/";
         public static String MicrosoftGraphBetaBaseUri = "https://graph.microsoft.com/beta/";
 
+        // Need to use Azure AD Graph API because Microsoft Graph Beta API /applications endpoint doesn't support creating single-tenant applications at the moment
+        public static String AzureADGraphApiVersion = "?api-version=1.6";
+        public static String AzureADGraphResourceId = "https://graph.windows.net";
+        public static String AzureADGraphBaseUri = "https://graph.windows.net/myorganization/";
+
         public static async Task<String> GetUserUniqueId(String clientId = null)
         {
             // ClientID of the Azure AD application
