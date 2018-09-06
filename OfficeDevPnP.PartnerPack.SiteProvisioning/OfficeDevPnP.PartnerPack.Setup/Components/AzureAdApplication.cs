@@ -13,6 +13,8 @@ namespace OfficeDevPnP.PartnerPack.Setup.Components
         public string keyId { get; set; }
         public string type { get; set; }
         public string usage { get; set; }
+
+        [JsonProperty("key")]
         public string value { get; set; }
     }
 
@@ -34,8 +36,6 @@ namespace OfficeDevPnP.PartnerPack.Setup.Components
         public List<object> addIns { get; set; }
         public List<object> appRoles { get; set; }
         public Guid? AppId { get; set; }
-
-        [JsonProperty("availableToOtherTenants")]
         public bool availableToOtherOrganizations { get; set; }
         public string displayName { get; set; }
         public object errorUrl { get; set; }
