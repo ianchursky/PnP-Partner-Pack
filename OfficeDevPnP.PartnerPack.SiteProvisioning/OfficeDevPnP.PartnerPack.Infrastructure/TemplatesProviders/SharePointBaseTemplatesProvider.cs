@@ -98,6 +98,53 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.TemplatesProviders
             }
         }
 
+        /// <summary>
+        /// [Rise]: Provides provisioning template when given Azure tenant ID
+        /// </summary>
+        public virtual ProvisioningTemplate GetProvisioningTemplateFromTenantId(string templateUri, string tenantId)
+        {
+            // Connect to the target Templates Site Collection
+            using (var context = PnPPartnerPackContextProvider.GetAppOnlyClientContextFromTenantId(TemplatesSiteUrl, tenantId))
+            {
+                // Get a reference to the target library
+                Web web = context.Web;
+
+                web.EnsureProperty(w => w.Url);
+
+                var templateRelativePath = templateUri.Substring(templateUri.LastIndexOf("/") + 1);
+
+                // Configure the SharePoint Connector
+                var sharepointConnector = new SharePointConnector(context, web.Url,
+                    PnPPartnerPackConstants.PnPProvisioningTemplates);
+
+                TemplateProviderBase provider = null;
+                // If the target is a .PNP Open XML template
+                if (templateRelativePath.ToLower().EndsWith(".pnp"))
+                {
+                    // Configure the Open XML provider for SharePoint
+                    provider =
+                        new XMLOpenXMLTemplateProvider(
+                            new OpenXMLConnector(templateRelativePath, sharepointConnector));
+                }
+                else
+                {
+                    // Otherwise use the .XML template provider for SharePoint
+                    provider =
+                        new XMLSharePointTemplateProvider(context, web.Url,
+                            PnPPartnerPackConstants.PnPProvisioningTemplates);
+                }
+
+                // Determine the name of the XML file inside the PNP Open XML file, if any
+                var xmlTemplateFile = templateRelativePath.ToLower().Replace(".pnp", ".xml");
+
+                // Get the template
+                ProvisioningTemplate template = provider.GetTemplate(xmlTemplateFile);
+                template.Connector = provider.Connector;
+
+                return (template);
+            }
+        }
+
         public virtual ProvisioningTemplateInformation[] SearchProvisioningTemplates(string searchText, TargetPlatform platforms, TargetScope scope)
         {
             String cacheKey = JsonConvert.SerializeObject(new SharePointSearchCacheKey

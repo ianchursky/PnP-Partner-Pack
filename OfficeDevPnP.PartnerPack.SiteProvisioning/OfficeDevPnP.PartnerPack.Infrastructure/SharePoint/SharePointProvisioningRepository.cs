@@ -447,18 +447,25 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.SharePoint
         public ProvisioningJob[] GetTypedProvisioningJobs<TJob>(ProvisioningJobStatus status, String owner = null)
             where TJob : ProvisioningJob
         {
-            // Get the ProvisioningJobInformation array, eventually filtered by Job type
-            var jobInfoList = this.GetProvisioningJobs(status,
-                typeof(TJob).FullName == typeof(ProvisioningJob).FullName ? null : typeof(TJob).FullName, 
-                true, owner);
-            List<TJob> jobs = new List<TJob>();
-
-            foreach (var jobInfo in jobInfoList)
+            try
             {
-                jobs.Add((TJob)jobInfo.JobFile.FromJsonStream(jobInfo.Type));
-            }
+                // Get the ProvisioningJobInformation array, eventually filtered by Job type
+                var jobInfoList = this.GetProvisioningJobs(status,
+                    typeof(TJob).FullName == typeof(ProvisioningJob).FullName ? null : typeof(TJob).FullName,
+                    true, owner);
+                List<TJob> jobs = new List<TJob>();
 
-            return (jobs.ToArray());
+                foreach (var jobInfo in jobInfoList)
+                {
+                    jobs.Add((TJob)jobInfo.JobFile.FromJsonStream(jobInfo.Type));
+                }
+                return (jobs.ToArray());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception Encountered: " + e.Message);
+                return new ProvisioningJob[0];
+            }
         }
 
         private static ProvisioningJobInformation PrepareJobInformationFromSharePoint(ClientContext context, ListItem jobItem, Boolean includeFileStream = false)

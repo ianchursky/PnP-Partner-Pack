@@ -35,5 +35,11 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.Jobs
         /// Defines the Error Message of the Provisioning Job, if any
         /// </summary>
         public String ErrorMessage { get; set; }
+
+        /// <summary>
+        /// [Rise]: Defines the tenant ID the Provisioning Job, if any
+        /// </summary>
+        public String TenantId { get; set; }
+
     }
 }

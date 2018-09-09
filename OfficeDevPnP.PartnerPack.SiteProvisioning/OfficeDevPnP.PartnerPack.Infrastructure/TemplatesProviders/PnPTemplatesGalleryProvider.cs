@@ -79,6 +79,37 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.TemplatesProviders
         }
 
         /// <summary>
+        /// [Rise]: Unused - This method is identical to GetProvisioningTemplate above and is only here to fulfill the ITemplatesProvider interface
+        /// </summary>
+        public ProvisioningTemplate GetProvisioningTemplateFromTenantId(string templateUri, string tenantId)
+        {
+            ProvisioningTemplate result = null;
+
+            // Get the template via HTTP REST
+            var templateStream = HttpHelper.MakeGetRequestForStream(
+                $"{this._templatesGalleryBaseUrl}api/DownloadTemplate?templateUri={HttpUtility.UrlEncode(templateUri)}",
+                "application/octet-stream");
+
+            // If we have any result
+            if (templateStream != null)
+            {
+                XMLTemplateProvider provider = new XMLOpenXMLTemplateProvider(
+                    new OpenXMLConnector(templateStream));
+
+                var openXMLFileName = templateUri.Substring(templateUri.LastIndexOf("/") + 1);
+
+                // Determine the name of the XML file inside the PNP Open XML file
+                var xmlTemplateFile = openXMLFileName.ToLower().Replace(".pnp", ".xml");
+
+                // Get the template
+                result = provider.GetTemplate(xmlTemplateFile);
+                result.Connector = provider.Connector;
+            }
+
+            return (result);
+        }
+
+        /// <summary>
         /// Search for templates in the PnP Templates Gallery
         /// </summary>
         /// <param name="searchText"></param>

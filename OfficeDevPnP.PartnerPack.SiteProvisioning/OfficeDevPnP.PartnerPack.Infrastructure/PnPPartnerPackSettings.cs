@@ -10,6 +10,9 @@ using OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml;
 using System.Xml;
 using OfficeDevPnP.PartnerPack.Infrastructure.Jobs.Handlers;
 using System.Runtime.Remoting.Messaging;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace OfficeDevPnP.PartnerPack.Infrastructure
 {
@@ -166,7 +169,28 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure
                 return (_infrastructureSiteUrl);
             }
         }
-        
+
+        /// <summary>
+        /// [Rise]: Provides the URL of the infrastructural site when an Azure tenant ID is provided 
+        /// </summary>
+        public static String InfrastructureSiteUrlFromTenantId(String tenantId)
+        {
+            HttpWebRequest webRequest = WebRequest.CreateHttp(String.Format("{0}/api/tenant/{1}", ConfigurationManager.AppSettings["RiseAPIUrl"], tenantId));
+            using (HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse())
+            {
+                using (Stream stream = response.GetResponseStream())
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        string jsonString = reader.ReadToEnd();
+                        dynamic customer = JObject.Parse(jsonString);
+
+                        return customer.SPHostUrl + customer.RiseSettingsSite;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Provides the .NET type name of the Provisioning Repository
         /// </summary>
@@ -387,5 +411,43 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure
                 return (providers);
             }
         }
+
+        /// <summary>
+        /// [Rise]: Gets templates providers when passed the tenant ID
+        /// </summary>
+        public static IReadOnlyDictionary<String, ITemplatesProvider> TemplatesProvidersFromTenantId(string tenantId)
+        {
+
+            Dictionary<String, ITemplatesProvider> providers = new Dictionary<String, ITemplatesProvider>();
+
+            // Browse through the configured Job Handlers
+            if (_configuration.TemplatesProviders != null)
+            {
+                // Go through the enabled template providers
+                foreach (var provider in _configuration.TemplatesProviders.Where(p => p.enabled))
+                {
+                    Type providerType = Type.GetType(provider.type, true);
+                    ITemplatesProvider providerInstance = (ITemplatesProvider)Activator.CreateInstance(providerType, tenantId);
+
+                    if (provider.Configuration != null)
+                    {
+                        // Convert it into a XElement
+                        using (XmlReader reader = new XmlNodeReader(provider.Configuration))
+                        {
+                            XElement configuration = XElement.Load(reader);
+
+                            // Initialize the Templates Provider
+                            providerInstance.Init(configuration);
+                        }
+                    }
+
+                    providers.Add(provider.name, providerInstance);
+                }
+            }
+
+            return (providers);
+
+        }
+
     }
 }

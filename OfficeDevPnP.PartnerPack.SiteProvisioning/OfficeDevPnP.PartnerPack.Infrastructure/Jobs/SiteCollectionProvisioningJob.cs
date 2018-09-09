@@ -55,5 +55,21 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.Jobs
         /// Defines whether to enable PnP Partner Pack extensions for Responsive Design
         /// </summary>
         public Boolean ResponsiveDesignEnabled { get; set; }
+
+        /// <summary>
+        /// [Rise]: Defines main menu
+        /// </summary>
+        public String MainMenu { get; set; }
+
+        /// <summary>
+        /// [Rise]: Defines footer
+        /// </summary>
+        public String FooterMenu { get; set; }
+
+        /// <summary>
+        /// [Rise]: Defines metadata
+        /// </summary>
+        public String CoreMetadata { get; set; }
+
     }
 }

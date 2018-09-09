@@ -53,13 +53,16 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.Jobs.Handlers
             }
             catch (Exception ex)
             {
+                // [Rise]: More information in error logging
+                string errorMessage = ex.Message + "... " + ex.StackTrace;
+                Console.WriteLine("Exception occurred: {0}\nStack Trace:\n{1}\n", ex.Message, ex.StackTrace);
+
                 // Set the Job status as Failed, including the exception details
                 ProvisioningRepositoryFactory.Current.UpdateProvisioningJob(
                     job.JobId,
-                    ProvisioningJobStatus.Failed,
-                    ex.Message);
-
-                Console.WriteLine("Exception occurred: {0}\nStack Trace:\n{1}\n", ex.Message, ex.StackTrace);
+                    ProvisioningJobStatus.Failed, 
+                    errorMessage);
+               
             }
         }
     }

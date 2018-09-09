@@ -23,11 +23,42 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure
             return (PnPPartnerPackContextProvider.GetAppOnlyClientContext(tenantAdminUri.ToString()));
         }
 
+        /// <summary>
+        /// [Rise]: Provides tenant level client context when Azure tenant ID is provided
+        /// </summary>
+        public static ClientContext GetAppOnlyTenantLevelClientContextFromTenantId(string tenantId)
+        {
+            Uri infrastructureSiteUri = new Uri(PnPPartnerPackSettings.InfrastructureSiteUrlFromTenantId(tenantId));
+            Uri tenantAdminUri = new Uri(infrastructureSiteUri.Scheme + "://" +
+                infrastructureSiteUri.Host.Replace(".sharepoint.com", "-admin.sharepoint.com"));
+
+            return (PnPPartnerPackContextProvider.GetAppOnlyClientContextFromTenantId(tenantAdminUri.ToString(), tenantId));
+        }
+
         public static ClientContext GetAppOnlyClientContext(String siteUrl)
         {
             string tenantID = ClaimsPrincipal.Current.HasClaim(c => c.Type == "http://schemas.microsoft.com/identity/claims/tenantid") ?
                 ClaimsPrincipal.Current.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid").Value :
                 PnPPartnerPackSettings.Tenant;
+
+            AuthenticationManager authManager = new AuthenticationManager();
+            ClientContext context = authManager.GetAzureADAppOnlyAuthenticatedContext(
+                siteUrl,
+                PnPPartnerPackSettings.ClientId,
+                tenantID,
+                PnPPartnerPackSettings.AppOnlyCertificate);
+
+            return (context);
+        }
+
+        /// <summary>
+        /// [Rise]: Provides site level client context when Azure tenant ID is provided
+        /// </summary>
+        public static ClientContext GetAppOnlyClientContextFromTenantId(String siteUrl, string tenantId)
+        {
+            string tenantID = ClaimsPrincipal.Current.HasClaim(c => c.Type == "http://schemas.microsoft.com/identity/claims/tenantid") ?
+                ClaimsPrincipal.Current.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid").Value :
+                tenantId;
 
             AuthenticationManager authManager = new AuthenticationManager();
             ClientContext context = authManager.GetAzureADAppOnlyAuthenticatedContext(

@@ -17,6 +17,11 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.Jobs
         public String SiteTitle { get; set; }
 
         /// <summary>
+        /// [Rise]: Defines the root URL of the Site Collection or Sub Site to provision (for supporting different root URLs used by tenant)
+        /// </summary>
+        public String RootUrl { get; set; }
+
+        /// <summary>
         /// Defines the Relative URL of the Site Collection or Sub Site to provision
         /// </summary>
         public String RelativeUrl { get; set; }

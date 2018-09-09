@@ -20,6 +20,11 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure
         ProvisioningTemplate GetProvisioningTemplate(String templateUri);
 
         /// <summary>
+        /// [Rise]: Retrieves a single Provisioning Template when the Azure tenant ID is provided
+        /// </summary>
+        ProvisioningTemplate GetProvisioningTemplateFromTenantId(String templateUri, String tenantId);
+
+        /// <summary>
         /// Allows to search for Provisioning Templates in the target repository
         /// </summary>
         /// <param name="searchText">Any free text to search for in title, abstract or URL/SEO of the template</param>
