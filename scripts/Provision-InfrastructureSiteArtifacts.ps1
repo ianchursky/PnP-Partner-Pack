@@ -55,13 +55,13 @@ $siteHost = $uri.Host.ToLower()
 $siteHost = $siteHost.Replace(".sharepoint.com","-admin.sharepoint.com")
 $siteHost = $siteHost.Trim('/')
 
-Connect-SPOnline -Url "https://$siteHost" -Credentials $Credentials
+Connect-PnPOnline -Url "https://$siteHost" -Credentials $Credentials
 $infrastructureSiteInfo = Get-PnPTenantSite -Url $InfrastructureSiteUrl -ErrorAction SilentlyContinue
 if($InfrastructureSiteInfo -eq $null)
 {
     Write-Host -ForegroundColor Cyan "Infrastructure Site does not exist. Please create site collection first through the UI, or use New-PnPTenantSite"
 } else {
-    Connect-SPOnline -Url $InfrastructureSiteUrl -Credentials $Credentials
+    Connect-PnPOnline -Url $InfrastructureSiteUrl -Credentials $Credentials
     Apply-PnPProvisioningTemplate -Path "$basePath\Templates\Infrastructure\PnP-Partner-Pack-Infrastructure-Jobs.xml"
     Apply-PnPProvisioningTemplate -Path "$basePath\Templates\Infrastructure\PnP-Partner-Pack-Infrastructure-Templates.xml"
 
