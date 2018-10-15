@@ -20,6 +20,11 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.TemplatesProviders
     {
         private String _templatesGalleryBaseUrl;
 
+        // [Rise]: Constructors PnPTemplatesGalleryProvider() and PnPTemplatesGalleryProvider(string tenantId) are additional constructors added.
+        public PnPTemplatesGalleryProvider() { }
+
+        public PnPTemplatesGalleryProvider(string tenantId) { }
+
         public string DisplayName
         {
             get { return ("PnP Templates Gallery"); }

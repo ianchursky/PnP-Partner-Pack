@@ -56,15 +56,12 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure
         /// </summary>
         public static ClientContext GetAppOnlyClientContextFromTenantId(String siteUrl, string tenantId)
         {
-            string tenantID = ClaimsPrincipal.Current.HasClaim(c => c.Type == "http://schemas.microsoft.com/identity/claims/tenantid") ?
-                ClaimsPrincipal.Current.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid").Value :
-                tenantId;
 
             AuthenticationManager authManager = new AuthenticationManager();
             ClientContext context = authManager.GetAzureADAppOnlyAuthenticatedContext(
                 siteUrl,
                 PnPPartnerPackSettings.ClientId,
-                tenantID,
+                tenantId,
                 PnPPartnerPackSettings.AppOnlyCertificate);
 
             return (context);

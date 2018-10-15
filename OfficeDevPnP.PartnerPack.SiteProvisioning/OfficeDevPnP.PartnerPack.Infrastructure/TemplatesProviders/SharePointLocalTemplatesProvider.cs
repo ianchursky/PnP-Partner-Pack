@@ -17,8 +17,13 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.TemplatesProviders
             get { return ("Current Site Collection"); }
         }
 
-        public SharePointLocalTemplatesProvider()
-            : base(PnPPartnerPackSettings.ParentSiteUrl)
+        // [Rise]: SharePointLocalTemplatesProvider() and SharePointLocalTemplatesProvider(String tenantId) are additional constructors added.
+        public SharePointLocalTemplatesProvider() : base(PnPPartnerPackSettings.ParentSiteUrl)
+        {
+
+        }
+
+        public SharePointLocalTemplatesProvider(String tenantId) : base(PnPPartnerPackSettings.ParentSiteUrl, tenantId)
         {
 
         }
@@ -28,6 +33,12 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.TemplatesProviders
         public override ProvisioningTemplate GetProvisioningTemplate(string templateUri)
         {
             return (base.GetProvisioningTemplate(templateUri));
+        }
+
+        // [Rise]: Additional method...
+        public override ProvisioningTemplate GetProvisioningTemplateFromTenantId(string templateUri, string tenantId)
+        {
+            return (base.GetProvisioningTemplateFromTenantId(templateUri, tenantId));
         }
 
         public override ProvisioningTemplateInformation[] SearchProvisioningTemplates(string searchText, TargetPlatform platforms, TargetScope scope)

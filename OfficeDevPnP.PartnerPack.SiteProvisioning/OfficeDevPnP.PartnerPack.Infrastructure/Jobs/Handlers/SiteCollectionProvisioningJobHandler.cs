@@ -55,7 +55,15 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.Jobs.Handlers
             }
             else
             {
-                return String.Format("{0}{1}", PnPPartnerPackSettings.InfrastructureSiteUrlFromTenantId(tenantId).Substring(0, PnPPartnerPackSettings.InfrastructureSiteUrlFromTenantId(tenantId).IndexOf("sharepoint.com/") + 14), job.RelativeUrl);
+                if(ConfigurationManager.AppSettings["SingleTenant"] == "true")
+                {
+                    return String.Format("{0}{1}", PnPPartnerPackSettings.InfrastructureSiteUrl.Substring(0, PnPPartnerPackSettings.InfrastructureSiteUrl.IndexOf("sharepoint.com/") + 14), job.RelativeUrl);
+
+                } else
+                {
+                    return String.Format("{0}{1}", PnPPartnerPackSettings.InfrastructureSiteUrlFromTenantId(tenantId).Substring(0, PnPPartnerPackSettings.InfrastructureSiteUrlFromTenantId(tenantId).IndexOf("sharepoint.com/") + 14), job.RelativeUrl);
+                }
+
             }
         }
 

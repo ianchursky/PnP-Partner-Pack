@@ -444,7 +444,9 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.SharePoint
             return (result.ToArray());
         }
 
-        public ProvisioningJob[] GetTypedProvisioningJobs<TJob>(ProvisioningJobStatus status, String owner = null)
+
+        // [Rise]: Added additional tenant Id parameter to fulfill interface
+        public ProvisioningJob[] GetTypedProvisioningJobs<TJob>(ProvisioningJobStatus status, String owner = null, String tenantId = null)
             where TJob : ProvisioningJob
         {
             try
@@ -463,7 +465,8 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.SharePoint
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception Encountered: " + e.Message);
+                string errorMessage = e.Message + "... " + e.StackTrace;
+                Console.WriteLine("Exception Encountered: " + errorMessage);
                 return new ProvisioningJob[0];
             }
         }

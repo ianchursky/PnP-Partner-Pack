@@ -50,6 +50,15 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.TemplatesProviders
                 PnPPartnerPackSettings.InfrastructureSiteUrl;
         }
 
+        // [Rise]: SharePointBaseTemplatesProvider(String templateSiteUrl, string tenantId) is an additional constructor
+        public SharePointBaseTemplatesProvider(String templateSiteUrl, string tenantId)
+        {
+            // If the ParentSiteUrl is empty or NULL, then fallback to Global Tenant settings
+            this.TemplatesSiteUrl = !String.IsNullOrEmpty(templateSiteUrl) ?
+                templateSiteUrl :
+                PnPPartnerPackSettings.InfrastructureSiteUrl;
+        }
+
         public void Init(XElement configuration)
         {
         }

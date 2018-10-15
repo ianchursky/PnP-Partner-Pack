@@ -76,9 +76,10 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure
         /// </summary>
         /// <param name="status">The status to use for filtering Provisioning Jobs</param>
         /// <param name="owner">The optional owner of the Provisioning Job</param>
+        /// <param name="tenantId">[Rise]: The optional Azure Active Directory tenant ID</param>
         /// <typeparam name="TJob">Represents the type of the Provisioning Jobs to retrieve</typeparam>
         /// <returns>The list of information about the Provisioning Jobs, if any</returns>
-        ProvisioningJob[] GetTypedProvisioningJobs<TJob>(ProvisioningJobStatus status, String owner = null)
+        ProvisioningJob[] GetTypedProvisioningJobs<TJob>(ProvisioningJobStatus status, String owner = null, String tenantId = null)
             where TJob : ProvisioningJob;
     }
 }

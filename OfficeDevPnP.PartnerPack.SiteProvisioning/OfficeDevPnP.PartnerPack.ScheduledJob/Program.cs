@@ -16,24 +16,36 @@ namespace OfficeDevPnP.PartnerPack.ScheduledJob
         {
             var job = new PnPPartnerPackProvisioningJob();
             job.UseThreading = false;
-            HttpWebRequest webRequest = WebRequest.CreateHttp(String.Format("{0}/api/tenant/list", ConfigurationManager.AppSettings["RiseAPIUrl"]));
-            using (HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse())
-            {
-                using (Stream stream = response.GetResponseStream())
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        string jsonString = reader.ReadToEnd();
-                        JArray tenantIds = JArray.Parse(jsonString);
-                        foreach (string tenantId in tenantIds)
-                        {
-                            job.AddSite(PnPPartnerPackSettings.InfrastructureSiteUrlFromTenantId(tenantId));
-                        }
 
-                        job.UseAzureADAppOnlyAuthentication(
-                            PnPPartnerPackSettings.ClientId,
-                            PnPPartnerPackSettings.Tenant,
-                            PnPPartnerPackSettings.AppOnlyCertificate);
+            if (ConfigurationManager.AppSettings["SingleTenant"] == "true")
+            {
+                job.AddSite(PnPPartnerPackSettings.InfrastructureSiteUrl);
+
+                job.UseAzureADAppOnlyAuthentication(
+                    PnPPartnerPackSettings.ClientId,
+                    PnPPartnerPackSettings.Tenant,
+                    PnPPartnerPackSettings.AppOnlyCertificate);
+            }
+            else { 
+                HttpWebRequest webRequest = WebRequest.CreateHttp(String.Format("{0}/api/tenant/list", ConfigurationManager.AppSettings["RiseAPIUrl"]));
+                using (HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse())
+                {
+                    using (Stream stream = response.GetResponseStream())
+                    {
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            string jsonString = reader.ReadToEnd();
+                            JArray tenantIds = JArray.Parse(jsonString);
+                            foreach (string tenantId in tenantIds)
+                            {
+                                job.AddSite(PnPPartnerPackSettings.InfrastructureSiteUrlFromTenantId(tenantId));
+                            }
+
+                            job.UseAzureADAppOnlyAuthentication(
+                                PnPPartnerPackSettings.ClientId,
+                                PnPPartnerPackSettings.Tenant,
+                                PnPPartnerPackSettings.AppOnlyCertificate);
+                        }
                     }
                 }
             }

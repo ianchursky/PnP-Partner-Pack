@@ -18,8 +18,13 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.TemplatesProviders
             get { return ("Global Tenant"); }
         }
 
-        public SharePointGlobalTemplatesProvider()
-            : base(PnPPartnerPackSettings.InfrastructureSiteUrl)
+        // [Rise]: SharePointGlobalTemplatesProvider() and SharePointGlobalTemplatesProvider(String tenantId) are additional constructors added.
+        public SharePointGlobalTemplatesProvider(): base(PnPPartnerPackSettings.InfrastructureSiteUrl)
+        {
+
+        }
+
+        public SharePointGlobalTemplatesProvider(String tenantId) : base(PnPPartnerPackSettings.InfrastructureSiteUrl, tenantId)
         {
 
         }
@@ -27,6 +32,12 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.TemplatesProviders
         public override ProvisioningTemplate GetProvisioningTemplate(string templateUri)
         {
             return (base.GetProvisioningTemplate(templateUri));
+        }
+
+        // [Rise]: Additional method...
+        public override ProvisioningTemplate GetProvisioningTemplateFromTenantId(string templateUri, string tenantId)
+        {
+            return (base.GetProvisioningTemplateFromTenantId(templateUri, tenantId));
         }
 
         public override  ProvisioningTemplateInformation[] SearchProvisioningTemplates(string searchText, TargetPlatform platforms, TargetScope scope)

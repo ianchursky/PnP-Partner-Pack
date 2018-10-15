@@ -16,7 +16,7 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.Jobs
         public static Stream ToJsonStream(this ProvisioningJob job)
         {
             String jsonString = JsonConvert.SerializeObject(job);
-            Byte[] jsonBytes = System.Text.Encoding.Unicode.GetBytes(jsonString);
+            Byte[] jsonBytes = System.Text.Encoding.UTF8.GetBytes(jsonString);
             MemoryStream jsonStream = new MemoryStream(jsonBytes);
             jsonStream.Position = 0;
 
@@ -77,7 +77,7 @@ namespace OfficeDevPnP.PartnerPack.Infrastructure.Jobs
 
         public static ProvisioningJob FromJsonStream(this Stream serializedJob, String jobType)
         {
-            using (StreamReader sr = new StreamReader(serializedJob, Encoding.Unicode, true))
+            using (StreamReader sr = new StreamReader(serializedJob, Encoding.UTF8, false))
             {
                 Type targetJobType = Type.GetType(jobType, true);
                 JsonSerializer json = new JsonSerializer();
