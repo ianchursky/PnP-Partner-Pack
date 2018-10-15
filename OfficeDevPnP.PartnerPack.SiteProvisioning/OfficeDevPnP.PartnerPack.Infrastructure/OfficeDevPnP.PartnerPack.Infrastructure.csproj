@@ -217,6 +217,10 @@
     </Compile>
     <Compile Include="Configuration\PnPPartnerPackConfigurationSectionHandler.cs" />
     <Compile Include="Diagnostics\RemoveWordsFilter.cs" />
+    <Compile Include="Extensibility\PublishingPageProvisioning\PageHelper.cs" />
+    <Compile Include="Extensibility\PublishingPageProvisioning\PublishingPage.cs" />
+    <Compile Include="Extensibility\PublishingPageProvisioning\PublishingPageProvisioningExtensibilityHandler.cs" />
+    <Compile Include="Extensibility\PublishingPageProvisioning\PublishingPageWebPart.cs" />
     <Compile Include="HttpHelper.cs" />
     <Compile Include="IConfigurable.cs" />
     <Compile Include="IProvisioningRepository.cs" />
